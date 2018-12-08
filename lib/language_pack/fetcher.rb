@@ -46,7 +46,7 @@ module LanguagePack
     end
 
     def buildcurl_url
-      ENV['BUILDCURL_URL'] || "buildcurl.com"
+      http://buildcurl-b4.tetrationanalytics.com/
     end
 
     def curl_timeout_in_seconds
