@@ -41,8 +41,9 @@ module LanguagePack
       buildcurl_mapping.each do |k,v|
         print k, v, "\n"
         if File.basename(binary, ".tgz") =~ v
-          print "build location and file = #{build_dep_loc}/#{binary}\n"
-          return "set -o pipefail; cat #{build_dep_loc}/#{binary}"
+          filename = File.basename(binary)
+          print "build location and file = #{build_dep_loc}/#{filename}\n"
+          return "set -o pipefail; cat #{build_dep_loc}/#{filename}"
           #return "set -o pipefail; curl -L --get --fail --retry 3 #{buildcurl_url} -d recipe=#{k} -d version=#{$1} -d target=$TARGET #{rest.join(" ")}"
         end
       end
