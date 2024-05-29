@@ -32,16 +32,17 @@ module LanguagePack
     private
     def curl_command(command)
       binary, *rest = command.split(" ")
+      print "binary = #{binary}\n"
       buildcurl_mapping = {
         "ruby" => /^ruby-(.+)$/,
         "rubygem-bundler" => /^bundler-(.+)$/,
         "libyaml" => /^libyaml-(.+)$/
       }
       buildcurl_mapping.each do |k,v|
-        print k, v
+        print k, v, "\n"
         if File.basename(binary, ".tgz") =~ v
-          print "build location and file = #{build_dep_loc}/#{v}"
-          return "set -o pipefail; cat #{build_dep_loc}/#{v}"
+          print "build location and file = #{build_dep_loc}/#{binary}\n"
+          return "set -o pipefail; cat #{build_dep_loc}/#{binary}"
           #return "set -o pipefail; curl -L --get --fail --retry 3 #{buildcurl_url} -d recipe=#{k} -d version=#{$1} -d target=$TARGET #{rest.join(" ")}"
         end
       end
