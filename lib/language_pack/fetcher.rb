@@ -38,13 +38,20 @@ module LanguagePack
         "libyaml" => /^libyaml-(.+)$/
       }
       buildcurl_mapping.each do |k,v|
+        print k, v
         if File.basename(binary, ".tgz") =~ v
-          return "set -o pipefail; curl -L --get --fail --retry 3 #{buildcurl_url} -d recipe=#{k} -d version=#{$1} -d target=$TARGET #{rest.join(" ")}"
+          print "build location and file = #{build_dep_loc}/#{v}"
+          return "set -o pipefail; cat #{build_dep_loc}/#{v}"
+          #return "set -o pipefail; curl -L --get --fail --retry 3 #{buildcurl_url} -d recipe=#{k} -d version=#{$1} -d target=$TARGET #{rest.join(" ")}"
         end
       end
       "set -o pipefail; curl -L --fail --retry 3 --retry-delay 1 --connect-timeout #{curl_connect_timeout_in_seconds} --max-time #{curl_timeout_in_seconds} #{command}"
     end
 
+    def build_dep_loc
+      ENV['BUILD_DEP_LOC']
+    end
+    
     def buildcurl_url
       ENV['BUILDCURL_URL'] || "buildcurl.com"
     end
