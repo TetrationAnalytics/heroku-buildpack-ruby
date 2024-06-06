@@ -32,14 +32,12 @@ module LanguagePack
     private
     def curl_command(command)
       binary, *rest = command.split(" ")
-      print "binary = #{binary}\n"
       buildcurl_mapping = {
         "ruby" => /^ruby-(.+)$/,
         "rubygem-bundler" => /^bundler-(.+)$/,
         "libyaml" => /^libyaml-(.+)$/
       }
       buildcurl_mapping.each do |k,v|
-        print k, v, "\n"
         if File.basename(binary, ".tgz") =~ v
           filename = File.basename(binary)
           print "build location and file = #{build_dep_loc}/#{filename}\n"
