@@ -798,8 +798,21 @@ params = CGI.parse(uri.query || "")
     else
       @node_preinstall_bin_path = false
     end
+    # on alma container, `which` binary is present and it will find `node`
+    # from `/usr/local/bin/node` as a result of which node is considered 
+    # `preinstalled` and the real node is not installed in the right place.
+    # lets ignore this path in this branch.
+    # HACK ALERT
+    if force_node_install?
+      print "forcing node install"
+      @node_preinstall_bin_path = false
+    end
   end
   alias :node_js_installed? :node_preinstall_bin_path
+
+  def force_node_install?
+    ENV["FORCE_NODE_INSTALL"].to_s.downcase == "true" || false
+  end
 
   def node_not_preinstalled?
     print "node_js_installed is #{node_js_installed?}\n"
