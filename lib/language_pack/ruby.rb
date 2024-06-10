@@ -460,6 +460,7 @@ ERROR
   # default set of binaries to install
   # @return [Array] resulting list
   def binaries
+    print "add_node_js_binary #{add_node_js_binary}\n"
     add_node_js_binary
   end
 
@@ -784,10 +785,12 @@ params = CGI.parse(uri.query || "")
   # checks if node.js is installed via the official heroku-buildpack-nodejs using multibuildpack
   # @return String if it's detected and false if it isn't
   def node_preinstall_bin_path
+    print "node_preinstall_bin_path at #{@node_preinstall_bin_path} \n"
     return @node_preinstall_bin_path if defined?(@node_preinstall_bin_path)
 
     legacy_path = "#{Dir.pwd}/#{NODE_BP_PATH}"
     path        = run("which node")
+    print "node path #{path} \n"
     if path && $?.success?
       @node_preinstall_bin_path = path
     elsif run("#{legacy_path}/node -v") && $?.success?
