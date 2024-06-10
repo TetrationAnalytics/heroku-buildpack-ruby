@@ -785,12 +785,10 @@ params = CGI.parse(uri.query || "")
   # checks if node.js is installed via the official heroku-buildpack-nodejs using multibuildpack
   # @return String if it's detected and false if it isn't
   def node_preinstall_bin_path
-    print "node_preinstall_bin_path at #{@node_preinstall_bin_path} \n"
     return @node_preinstall_bin_path if defined?(@node_preinstall_bin_path)
 
     legacy_path = "#{Dir.pwd}/#{NODE_BP_PATH}"
     path        = run("which node")
-    print "node path #{path} \n"
     if path && $?.success?
       @node_preinstall_bin_path = path
     elsif run("#{legacy_path}/node -v") && $?.success?
@@ -804,24 +802,17 @@ params = CGI.parse(uri.query || "")
     # lets ignore this path in this branch.
     # HACK ALERT
     if force_node_install?
-      print "forcing node install"
+      print "forcing node install\n"
       @node_preinstall_bin_path = false
     end
   end
   alias :node_js_installed? :node_preinstall_bin_path
 
   def force_node_install?
-    a = ENV["FORCE_NODE_INSTALL"]
-    print "FORCE_NODE_INSTALL is #{a}\n"
-    if a
-      a.to_s.downcase == "true"
-    else
-      false
-    end
+    ENV["FORCE_NODE_INSTALL"].to_s.downcase == "true" || false
   end
 
   def node_not_preinstalled?
-    print "node_js_installed is #{node_js_installed?}\n"
     !node_js_installed?
   end
 
