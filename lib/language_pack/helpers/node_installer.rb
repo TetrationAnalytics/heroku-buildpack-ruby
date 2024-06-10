@@ -9,13 +9,11 @@ class LanguagePack::NodeInstaller
   NODEJS_BASE_URL     = "#{NODEJS_BASE}/v#{MODERN_NODE_VERSION}/"
 
   def initialize(stack)
-    print "Initialized node installer\n"
     @fetchers = {
       modern: LanguagePack::Fetcher.new(NODEJS_BASE_URL),
       legacy: LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, LanguagePack::Base::DEFAULT_LEGACY_STACK)
     }
     @legacy   = stack == LanguagePack::Base::DEFAULT_LEGACY_STACK
-    print "stack = #{@legacy}\n"
   end
 
   def version
@@ -35,13 +33,11 @@ class LanguagePack::NodeInstaller
   end
 
   def install
-    print "installing node\n"
     if @legacy
       @fetchers[:legacy].fetch_untar("#{LEGACY_BINARY_PATH}.tgz")
     else
       node_bin = "#{MODERN_BINARY_PATH}/bin/node"
       @fetchers[:modern].fetch_untar("#{MODERN_BINARY_PATH}.tar.gz", "#{MODERN_BINARY_PATH}/bin/node")
-      print "moving #{node_bin}\n"
       FileUtils.mv(node_bin, ".")
       FileUtils.rm_rf(MODERN_BINARY_PATH)
     end
