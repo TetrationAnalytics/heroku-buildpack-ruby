@@ -802,7 +802,7 @@ params = CGI.parse(uri.query || "")
   alias :node_js_installed? :node_preinstall_bin_path
 
   def node_not_preinstalled?
-    print "node_js_installed is #{node_js_installed}\n"
+    print "node_js_installed is #{node_js_installed?}\n"
     !node_js_installed?
   end
 
