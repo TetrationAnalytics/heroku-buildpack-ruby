@@ -811,7 +811,13 @@ params = CGI.parse(uri.query || "")
   alias :node_js_installed? :node_preinstall_bin_path
 
   def force_node_install?
-    ENV["FORCE_NODE_INSTALL"].to_s.downcase == "true" || false
+    a? = ENV["FORCE_NODE_INSTALL"]
+    print "FORCE_NODE_INSTALL is #{a?}\n"
+    if a?
+      a?.to_s.downcase == "true"
+    else
+      false
+    end
   end
 
   def node_not_preinstalled?
