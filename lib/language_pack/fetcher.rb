@@ -21,12 +21,14 @@ module LanguagePack
 
     def fetch_untar(path, files_to_extract = nil)
       curl = curl_command("#{@host_url.join(path)} -s -o")
-      run!("#{curl} - | tar zxf - #{files_to_extract}", error_class: FetchError)
+      run!("#{curl} | tar zxf - #{files_to_extract}", error_class: FetchError)
+      print 'done - fetch_untar'
     end
 
     def fetch_bunzip2(path, files_to_extract = nil)
       curl = curl_command("#{@host_url.join(path)} -s -o")
-      run!("#{curl} - | tar jxf - #{files_to_extract}", error_class: FetchError)
+      run!("#{curl} | tar jxf - #{files_to_extract}", error_class: FetchError)
+      print 'done - fetch_bunzip2'
     end
 
     private
@@ -35,7 +37,8 @@ module LanguagePack
       buildcurl_mapping = {
         "ruby" => /^ruby-(.+)$/,
         "rubygem-bundler" => /^bundler-(.+)$/,
-        "libyaml" => /^libyaml-(.+)$/
+        "libyaml" => /^libyaml-(.+)$/,
+        "node" => /^node-(.+)$/
       }
       buildcurl_mapping.each do |k,v|
         if File.basename(binary, ".tgz") =~ v
@@ -51,7 +54,7 @@ module LanguagePack
     def build_dep_loc
       ENV['BUILD_DEP_LOC']
     end
-    
+
     def buildcurl_url
       ENV['BUILDCURL_URL'] || "buildcurl.com"
     end
