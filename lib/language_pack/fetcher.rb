@@ -31,6 +31,12 @@ module LanguagePack
       print 'done - fetch_bunzip2'
     end
 
+    def fetch_xz(path, files_to_extract = nil)
+      curl = curl_command("#{@host_url.join(path)} -s -o")
+      run!("#{curl} | tar Jxf - #{files_to_extract}", error_class: FetchError)
+      print 'done - fetch_xz'
+    end
+
     private
     def curl_command(command)
       binary, *rest = command.split(" ")
