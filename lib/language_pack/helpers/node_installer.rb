@@ -1,5 +1,5 @@
 class LanguagePack::NodeInstaller
-  MODERN_NODE_VERSION = "0.10.30"
+  MODERN_NODE_VERSION = "18.19.0"
   MODERN_BINARY_PATH  = "node-v#{MODERN_NODE_VERSION}-linux-x64"
 
   LEGACY_NODE_VERSION = "0.4.7"
@@ -37,7 +37,7 @@ class LanguagePack::NodeInstaller
       @fetchers[:legacy].fetch_untar("#{LEGACY_BINARY_PATH}.tgz")
     else
       node_bin = "#{MODERN_BINARY_PATH}/bin/node"
-      @fetchers[:modern].fetch_untar("#{MODERN_BINARY_PATH}.tar.gz", "#{MODERN_BINARY_PATH}/bin/node")
+      @fetchers[:modern].fetch_xz("#{MODERN_BINARY_PATH}.tar.xz", "#{MODERN_BINARY_PATH}/bin/node")
       FileUtils.mv(node_bin, ".")
       FileUtils.rm_rf(MODERN_BINARY_PATH)
     end

@@ -12,7 +12,7 @@ require "language_pack/version"
 # base Ruby Language Pack. This is for any base ruby app.
 class LanguagePack::Ruby < LanguagePack::Base
   NAME                 = "ruby"
-  LIBYAML_VERSION      = "0.1.7"
+  LIBYAML_VERSION      = "0.2.5"
   LIBYAML_PATH         = "libyaml-#{LIBYAML_VERSION}"
   BUNDLER_VERSION      = "1.11.2"
   BUNDLER_GEM_PATH     = "bundler-#{BUNDLER_VERSION}"
@@ -460,6 +460,7 @@ ERROR
   # default set of binaries to install
   # @return [Array] resulting list
   def binaries
+    print "add_node_js_binary #{add_node_js_binary}\n"
     add_node_js_binary
   end
 
@@ -544,7 +545,7 @@ WARNING
     instrument 'ruby.build_bundler' do
       log("bundle") do
         bundle_without = env("BUNDLE_WITHOUT") || "development:test"
-        bundle_bin     = "bundle"
+        bundle_bin     = "bundle config --global ssl_verify_mode 0 && bundle"
         bundle_command = "#{bundle_bin} install --without #{bundle_without} --path vendor/bundle --binstubs #{bundler_binstubs_path}"
         bundle_command << " -j4"
 
@@ -795,8 +796,21 @@ params = CGI.parse(uri.query || "")
     else
       @node_preinstall_bin_path = false
     end
+    # on alma container, `which` binary is present and it will find `node`
+    # from `/usr/local/bin/node` as a result of which node is considered 
+    # `preinstalled` and the real node is not installed in the right place.
+    # lets ignore this path in this branch.
+    # HACK ALERT
+    if force_node_install?
+      print "forcing node install\n"
+      @node_preinstall_bin_path = false
+    end
   end
   alias :node_js_installed? :node_preinstall_bin_path
+
+  def force_node_install?
+    ENV["FORCE_NODE_INSTALL"].to_s.downcase == "true" || false
+  end
 
   def node_not_preinstalled?
     !node_js_installed?

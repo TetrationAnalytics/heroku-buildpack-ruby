@@ -21,12 +21,20 @@ module LanguagePack
 
     def fetch_untar(path, files_to_extract = nil)
       curl = curl_command("#{@host_url.join(path)} -s -o")
-      run!("#{curl} - | tar zxf - #{files_to_extract}", error_class: FetchError)
+      run!("#{curl} | tar zxf - #{files_to_extract}", error_class: FetchError)
+      print 'done - fetch_untar'
     end
 
     def fetch_bunzip2(path, files_to_extract = nil)
       curl = curl_command("#{@host_url.join(path)} -s -o")
-      run!("#{curl} - | tar jxf - #{files_to_extract}", error_class: FetchError)
+      run!("#{curl} | tar jxf - #{files_to_extract}", error_class: FetchError)
+      print 'done - fetch_bunzip2'
+    end
+
+    def fetch_xz(path, files_to_extract = nil)
+      curl = curl_command("#{@host_url.join(path)} -s -o")
+      run!("#{curl} | tar Jxf - #{files_to_extract}", error_class: FetchError)
+      print 'done - fetch_xz'
     end
 
     private
@@ -35,14 +43,22 @@ module LanguagePack
       buildcurl_mapping = {
         "ruby" => /^ruby-(.+)$/,
         "rubygem-bundler" => /^bundler-(.+)$/,
-        "libyaml" => /^libyaml-(.+)$/
+        "libyaml" => /^libyaml-(.+)$/,
+        "node" => /^node-(.+)$/
       }
       buildcurl_mapping.each do |k,v|
         if File.basename(binary, ".tgz") =~ v
-          return "set -o pipefail; curl -L --get --fail --retry 3 #{buildcurl_url} -d recipe=#{k} -d version=#{$1} -d target=$TARGET #{rest.join(" ")}"
+          filename = File.basename(binary)
+          print "build location and file = #{build_dep_loc}/#{filename}\n"
+          return "set -o pipefail; cat #{build_dep_loc}/#{filename}"
+          #return "set -o pipefail; curl -L --get --fail --retry 3 #{buildcurl_url} -d recipe=#{k} -d version=#{$1} -d target=$TARGET #{rest.join(" ")}"
         end
       end
       "set -o pipefail; curl -L --fail --retry 3 --retry-delay 1 --connect-timeout #{curl_connect_timeout_in_seconds} --max-time #{curl_timeout_in_seconds} #{command}"
+    end
+
+    def build_dep_loc
+      ENV['BUILD_DEP_LOC']
     end
 
     def buildcurl_url
