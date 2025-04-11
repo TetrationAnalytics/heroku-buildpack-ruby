@@ -1,5 +1,5 @@
 class LanguagePack::NodeInstaller
-  MODERN_NODE_VERSION = "18.19.0"
+  MODERN_NODE_VERSION = ENV['NODEJS_VERSION'] || "18.19.0"
   MODERN_BINARY_PATH  = "node-v#{MODERN_NODE_VERSION}-linux-x64"
 
   LEGACY_NODE_VERSION = "0.4.7"
