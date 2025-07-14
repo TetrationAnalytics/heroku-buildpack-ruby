@@ -16,17 +16,20 @@ module LanguagePack
 
     def fetch(path)
       curl = curl_command("-O #{@host_url.join(path)}")
+      print "command to run is = #{curl}"
       run!(curl, error_class: FetchError)
     end
 
     def fetch_untar(path, files_to_extract = nil)
       curl = curl_command("#{@host_url.join(path)} -s -o")
+      print "command to run is = #{curl} | tar zxf - #{files_to_extract}"
       run!("#{curl} | tar zxf - #{files_to_extract}", error_class: FetchError)
       print 'done - fetch_untar'
     end
 
     def fetch_bunzip2(path, files_to_extract = nil)
       curl = curl_command("#{@host_url.join(path)} -s -o")
+      print "command to run is = #{curl} | tar jxf - #{files_to_extract}"
       run!("#{curl} | tar jxf - #{files_to_extract}", error_class: FetchError)
       print 'done - fetch_bunzip2'
     end
