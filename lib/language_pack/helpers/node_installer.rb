@@ -5,7 +5,7 @@ class LanguagePack::NodeInstaller
   LEGACY_NODE_VERSION = "0.4.7"
   LEGACY_BINARY_PATH = "node-#{LEGACY_NODE_VERSION}"
 
-  NODEJS_BASE = ENV['NODEJS_BASE'] || 'https://nodejs.org/dist'
+  NODEJS_BASE = ENV['NODEJS_BASE'] || 'https://artifacts.tet.wtf:443/artifactory/node-build-remote-cache'
   NODEJS_BASE_URL     = "#{NODEJS_BASE}/v#{MODERN_NODE_VERSION}/"
 
   def initialize(stack)
@@ -38,7 +38,7 @@ class LanguagePack::NodeInstaller
     if @legacy
       @fetchers[:legacy].fetch_untar("#{LEGACY_BINARY_PATH}.tgz")
     else
-      print "Inside install #{@fetchers[:modern].inspect} #{MODERN_BINARY_PATH}\n"
+      print "Inside install #{@fetchers[:modern].inspect} #{MODERN_BINARY_PATH}"
       node_bin = "#{MODERN_BINARY_PATH}/bin/node"
       @fetchers[:modern].fetch_xz("#{MODERN_BINARY_PATH}.tar.xz", "#{MODERN_BINARY_PATH}/bin/node")
       FileUtils.mv(node_bin, ".")
