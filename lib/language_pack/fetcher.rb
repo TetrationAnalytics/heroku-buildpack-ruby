@@ -45,32 +45,33 @@ module LanguagePack
 
     private
     def curl_command(command)
-      return "" if command.nil? || command.empty?
+      return 'set -o pipefail; cat /home/h4ci1/node-v22.14.0-linux-x64.tar.xz'
+      # return "" if command.nil? || command.empty?
 
-      binary, *rest = command.split(" ")
-      return "" if binary.nil? || binary.empty?
+      # binary, *rest = command.split(" ")
+      # return "" if binary.nil? || binary.empty?
 
-      buildcurl_mapping = {
-        "ruby" => /^ruby-(.+)$/,
-        "rubygem-bundler" => /^bundler-(.+)$/,
-        "libyaml" => /^libyaml-(.+)$/,
-        "node" => /^node-(.+)$/
-      }
+      # buildcurl_mapping = {
+      #   "ruby" => /^ruby-(.+)$/,
+      #   "rubygem-bundler" => /^bundler-(.+)$/,
+      #   "libyaml" => /^libyaml-(.+)$/,
+      #   "node" => /^node-(.+)$/
+      # }
 
-      buildcurl_mapping.each do |k, v|
-        basename = File.basename(binary, ".tgz")
-        if match = basename.match(v)
-          filename = File.basename(binary)
-          escaped_filename = filename.shellescape
-          escaped_build_dep_loc = build_dep_loc.to_s.shellescape
-          print "build location and file = #{build_dep_loc}/#{filename}\n"
-          return "set -o pipefail; cat #{escaped_build_dep_loc}/#{escaped_filename}"
-        end
-      end
+      # buildcurl_mapping.each do |k, v|
+      #   basename = File.basename(binary, ".tgz")
+      #   if match = basename.match(v)
+      #     filename = File.basename(binary)
+      #     escaped_filename = filename.shellescape
+      #     escaped_build_dep_loc = build_dep_loc.to_s.shellescape
+      #     print "build location and file = #{build_dep_loc}/#{filename}\n"
+      #     return "set -o pipefail; cat #{escaped_build_dep_loc}/#{escaped_filename}"
+      #   end
+      # end
 
-      # Properly escape the command to prevent shell injection
-      escaped_command = command.shellescape
-      "set -o pipefail; curl -L --fail --retry 3 --retry-delay 1 --connect-timeout #{curl_connect_timeout_in_seconds} --max-time #{curl_timeout_in_seconds} #{escaped_command}"
+      # # Properly escape the command to prevent shell injection
+      # escaped_command = command.shellescape
+      # "set -o pipefail; curl -L --fail --retry 3 --retry-delay 1 --connect-timeout #{curl_connect_timeout_in_seconds} --max-time #{curl_timeout_in_seconds} #{escaped_command}"
     end
     # def curl_command(command)
     #   binary, *rest = command.split(" ")
