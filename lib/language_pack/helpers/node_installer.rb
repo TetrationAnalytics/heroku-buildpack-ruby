@@ -13,6 +13,8 @@ class LanguagePack::NodeInstaller
       modern: LanguagePack::Fetcher.new(NODEJS_BASE_URL),
       legacy: LanguagePack::Fetcher.new(LanguagePack::Base::VENDOR_URL, LanguagePack::Base::DEFAULT_LEGACY_STACK)
     }
+    print "Stack #{stack}\n"
+    print "Default stack #{LanguagePack::Base::DEFAULT_LEGACY_STACK}\n"
     @legacy   = stack == LanguagePack::Base::DEFAULT_LEGACY_STACK
   end
 
