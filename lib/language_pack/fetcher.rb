@@ -45,23 +45,51 @@ module LanguagePack
 
     private
     def curl_command(command)
+      return "" if command.nil? || command.empty?
+
       binary, *rest = command.split(" ")
+      return "" if binary.nil? || binary.empty?
+
       buildcurl_mapping = {
         "ruby" => /^ruby-(.+)$/,
         "rubygem-bundler" => /^bundler-(.+)$/,
         "libyaml" => /^libyaml-(.+)$/,
         "node" => /^node-(.+)$/
       }
-      buildcurl_mapping.each do |k,v|
-        if File.basename(binary, ".tgz") =~ v
+
+      buildcurl_mapping.each do |k, v|
+        basename = File.basename(binary, ".tgz")
+        if match = basename.match(v)
           filename = File.basename(binary)
+          escaped_filename = filename.shellescape
+          escaped_build_dep_loc = build_dep_loc.to_s.shellescape
           print "build location and file = #{build_dep_loc}/#{filename}\n"
-          return "set -o pipefail; cat #{build_dep_loc}/#{filename}"
-          #return "set -o pipefail; curl -L --get --fail --retry 3 #{buildcurl_url} -d recipe=#{k} -d version=#{$1} -d target=$TARGET #{rest.join(" ")}"
+          return "set -o pipefail; cat #{escaped_build_dep_loc}/#{escaped_filename}"
         end
       end
-      "set -o pipefail; curl -L --fail --retry 3 --retry-delay 1 --connect-timeout #{curl_connect_timeout_in_seconds} --max-time #{curl_timeout_in_seconds} #{command}"
+
+      # Properly escape the command to prevent shell injection
+      escaped_command = command.shellescape
+      "set -o pipefail; curl -L --fail --retry 3 --retry-delay 1 --connect-timeout #{curl_connect_timeout_in_seconds} --max-time #{curl_timeout_in_seconds} #{escaped_command}"
     end
+    # def curl_command(command)
+    #   binary, *rest = command.split(" ")
+    #   buildcurl_mapping = {
+    #     "ruby" => /^ruby-(.+)$/,
+    #     "rubygem-bundler" => /^bundler-(.+)$/,
+    #     "libyaml" => /^libyaml-(.+)$/,
+    #     "node" => /^node-(.+)$/
+    #   }
+    #   buildcurl_mapping.each do |k,v|
+    #     if File.basename(binary, ".tgz") =~ v
+    #       filename = File.basename(binary)
+    #       print "build location and file = #{build_dep_loc}/#{filename}\n"
+    #       return "set -o pipefail; cat #{build_dep_loc}/#{filename}"
+    #       #return "set -o pipefail; curl -L --get --fail --retry 3 #{buildcurl_url} -d recipe=#{k} -d version=#{$1} -d target=$TARGET #{rest.join(" ")}"
+    #     end
+    #   end
+    #   "set -o pipefail; curl -L --fail --retry 3 --retry-delay 1 --connect-timeout #{curl_connect_timeout_in_seconds} --max-time #{curl_timeout_in_seconds} #{command}"
+    # end
 
     def build_dep_loc
       ENV['BUILD_DEP_LOC']
