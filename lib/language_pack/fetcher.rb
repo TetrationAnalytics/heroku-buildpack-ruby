@@ -35,7 +35,9 @@ module LanguagePack
     end
 
     def fetch_xz(path, files_to_extract = nil)
+      print "Before CURL #{@host_url}"
       curl = curl_command("#{@host_url.join(path)} -s -o")
+      print "AFTER CURL #{curl}"
       print "command to run is = #{curl} | tar Jxf - #{files_to_extract}"
       run!("#{curl} | tar Jxf - #{files_to_extract}", error_class: FetchError)
       print 'done - fetch_xz'
